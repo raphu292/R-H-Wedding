@@ -1,0 +1,119 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#ead2d8">
+  <meta name="description" content="The wedding invitation of Raphael and Helia Teimoori-Unson at Casa Bolivar.">
+  <title>Raphael & Helia | Wedding Invitation</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600&family=Montserrat:wght@400;500;600&family=Parisienne&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="swan-garden.css">
+</head>
+<body class="locked">
+  <audio id="music" loop preload="auto"><source src="assets/starlit-vows-sample.mp3" type="audio/mpeg"></audio>
+
+  <section class="gate" id="gate">
+    <div class="stars"></div>
+    <p class="eyebrow">A letter for you</p>
+    <h1>Raphael <i>&amp;</i> Helia</h1>
+    <p>22 · 05 · 2027</p>
+    <button class="envelope" id="openInvitation" aria-label="Open the invitation">
+      <span class="letter"><small>THE WEDDING OF</small><b>R &amp; H</b></span>
+      <span class="flap"></span><span class="front"></span><span class="seal">R<i>&amp;</i>H</span>
+    </button>
+    <button class="open-copy" id="openCopy">Open the invitation</button>
+  </section>
+
+  <button class="music" id="musicButton" aria-label="Play background music">
+    <span class="bars"><i></i><i></i><i></i></span>
+    <span><small>Original sample</small>Starlit Vows</span>
+    <b>Play</b>
+  </button>
+
+  <main>
+    <section class="hero">
+      <div class="hero-photo">
+        <img src="assets/swan-garden-hero.png" alt="Dreamlike swan garden with pink blossoms, a classical pavilion, and a bridge">
+      </div>
+      <div class="hero-copy">
+        <p class="eyebrow">Together with their families</p>
+        <p class="script">You are joyfully invited</p>
+        <h2>Raphael <i>&amp;</i> Helia</h2>
+        <div class="ornament">— ✦ —</div>
+        <p class="date">Saturday · May 22, 2027 · 4:00 PM</p>
+        <p class="venue">Casa Bolivar · Four in the afternoon</p>
+        <a class="button" href="#details">Discover the day ↓</a>
+      </div>
+    </section>
+
+    <section class="intro" id="details">
+      <p class="eyebrow">A fairy-tale celebration beneath the stars</p>
+      <h2>One promise, one beautiful beginning.</h2>
+      <p>Join Raphael and Helia for an intimate afternoon of vows, candlelight, and dancing in a garden made for magic.</p>
+    </section>
+
+    <section class="details">
+      <div class="heading"><p class="eyebrow">The details</p><h2>Save the date</h2></div>
+      <div class="detail-card">
+        <div class="calendar"><small>Saturday</small><strong>22</strong><small>May · 2027</small></div>
+        <div class="rule"></div>
+        <div>
+          <small>Ceremony at four in the afternoon</small>
+          <h3>Casa Bolivar</h3>
+          <p>Reception and dancing to follow beneath the stars.</p>
+          <a href="raphael-helia-wedding.ics" download>Add to calendar</a>
+        </div>
+      </div>
+    </section>
+
+    <section class="venue-section">
+      <div class="venue-image"><img src="assets/swan-garden-hero.png" alt="Swan garden wedding illustration"></div>
+      <div class="venue-text">
+        <p class="eyebrow">Where we will say “I do”</p>
+        <h2>Casa Bolivar</h2>
+        <p>An intimate garden celebration framed by candlelight, old-world details, and the people we love most.</p>
+        <dl><dt>Arrival</dt><dd>Please arrive between 3:30 and 3:45 PM.</dd><dt>Attire</dt><dd>Fairy Garden Formal · pastels and soft florals welcomed.</dd></dl>
+        <a href="https://www.google.com/maps/search/?api=1&query=Casa+Bolivar" target="_blank" rel="noopener">Open map search ↗</a>
+      </div>
+    </section>
+
+    <section class="schedule">
+      <p class="eyebrow">Order of celebration</p><h2>A day written in starlight</h2>
+      <div class="timeline">
+        <article><time>3:30 PM</time><b>Guest arrival</b><span>Welcome drinks in the garden</span></article>
+        <article><time>4:00 PM</time><b>The ceremony</b><span>Vows beneath the trees</span></article>
+        <article><time>5:00 PM</time><b>Cocktails</b><span>Portraits and golden-hour toasts</span></article>
+        <article><time>6:00 PM</time><b>Dinner & dancing</b><span>A candlelit celebration</span></article>
+      </div>
+    </section>
+
+    <section class="countdown">
+      <p class="eyebrow">Counting down to forever</p>
+      <h2>May 22, 2027</h2>
+      <div class="clock"><span><b id="days">000</b>Days</span><span><b id="hours">00</b>Hours</span><span><b id="minutes">00</b>Minutes</span><span><b id="seconds">00</b>Seconds</span></div>
+    </section>
+
+    <section class="notes">
+      <article><span>✦</span><h3>Adults-only celebration</h3><p>While we adore your little ones, we kindly request that our wedding be an adults-only occasion.</p></article>
+      <article><span>♡</span><h3>Your presence is the greatest gift</h3><p>No gifts are needed. Optional GCash details can be added here later.</p></article>
+    </section>
+
+    <section class="rsvp" id="rsvp">
+      <p class="eyebrow">Kindly reply</p><h2>Will you join us?</h2>
+      <p>This is a sample RSVP demonstration. Your final response form can be connected later.</p>
+      <form id="rsvpForm">
+        <label>Your name<input required name="name" placeholder="Full name"></label>
+        <label>Will you attend?<select required name="attendance"><option value="">Choose one</option><option>Joyfully accepts</option><option>Regretfully declines</option></select></label>
+        <label>A note for the couple<textarea name="message" placeholder="Share your wishes"></textarea></label>
+        <button class="button" type="submit">Send sample RSVP</button>
+      </form>
+      <p class="success" id="success">Thank you—your sample response has been received on this device.</p>
+    </section>
+  </main>
+  <footer><span>R</span><i>&amp;</i><span>H</span><p>Raphael & Helia Teimoori-Unson · 22 May 2027</p></footer>
+  <script src="script.js"></script>
+</body>
+</html>

@@ -1,0 +1,14 @@
+BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//Raphael and Helia Wedding//EN
+CALSCALE:GREGORIAN
+BEGIN:VEVENT
+UID:raphael-helia-20270522@wedding
+DTSTAMP:20260725T000000Z
+DTSTART;TZID=Asia/Manila:20270522T160000
+DTEND;TZID=Asia/Manila:20270522T220000
+SUMMARY:Raphael & Helia's Wedding
+LOCATION:Casa Bolivar
+DESCRIPTION:Wedding ceremony and reception for Raphael and Helia Teimoori-Unson.
+END:VEVENT
+END:VCALENDAR

@@ -56,12 +56,24 @@ function playTone(midi, start, duration, kind, volume) {
     gain.gain.setValueAtTime(.0001, start);
     gain.gain.exponentialRampToValueAtTime(volume, start + .16);
     gain.gain.setValueAtTime(volume * .9, Math.max(start + .17, start + duration - .28));
+  } else if (kind === "cello") {
+    oscillator.type = "sawtooth";
+    filter.frequency.value = 680;
+    filter.Q.value = .8;
+    gain.gain.setValueAtTime(.0001, start);
+    gain.gain.exponentialRampToValueAtTime(volume, start + .18);
+    gain.gain.setValueAtTime(volume * .88, Math.max(start + .2, start + duration - .32));
   } else if (kind === "pad") {
     oscillator.type = "sine";
     filter.frequency.value = 1200;
     gain.gain.setValueAtTime(.0001, start);
     gain.gain.exponentialRampToValueAtTime(volume, start + .55);
     gain.gain.setValueAtTime(volume, Math.max(start + .56, start + duration - .6));
+  } else if (kind === "harp") {
+    oscillator.type = "sine";
+    filter.frequency.value = 4800;
+    gain.gain.setValueAtTime(volume, start);
+    gain.gain.exponentialRampToValueAtTime(.0001, start + duration);
   } else {
     oscillator.type = "triangle";
     filter.frequency.value = 3200;
@@ -78,16 +90,27 @@ function playTone(midi, start, duration, kind, volume) {
 function scheduleLoop(start) {
   chords.forEach((chord, barIndex) => {
     const barStart = start + barIndex * BAR_SECONDS;
-    chord.forEach(note => playTone(note, barStart, 3.05, "pad", .055));
+
+    chord.forEach(note => playTone(note, barStart, 3.05, "pad", .042));
+    playTone(chord[0] - 12, barStart, 1.46, "cello", .07);
+    playTone(chord[2] - 12, barStart + 1.5, 1.46, "cello", .06);
+
+    playTone(chord[1] + 12, barStart, 1.44, "violin", .028);
+    playTone(chord[2] + 12, barStart + 1.5, 1.44, "violin", .03);
 
     const arpeggio = [chord[0], chord[1], chord[2], chord[1], chord[2], chord[1]];
     arpeggio.forEach((note, step) => {
-      playTone(note + 12, barStart + step * .5, .58, "piano", .095);
-      if (step === 0 || step === 3) playTone(chord[0], barStart + step * .5, .7, "piano", .065);
+      playTone(note + 12, barStart + step * .5, .58, "piano", .078);
+      if (step === 0 || step === 3) {
+        playTone(chord[0], barStart + step * .5, .7, "piano", .052);
+      }
+      if (step === 0 || step === 2 || step === 4) {
+        playTone(note + 24, barStart + step * .5, .42, "harp", .025);
+      }
     });
 
     melody[barIndex].forEach(([note, offset, duration]) => {
-      playTone(note, barStart + offset, duration, "violin", .14);
+      playTone(note, barStart + offset, duration, "violin", .12);
     });
   });
 }

@@ -105,9 +105,9 @@
       <p class="eyebrow">Kindly reply</p><h2>Will you join us?</h2>
       <p>Please let us know if we may save you a seat beneath the stars. Your response will be recorded in our RSVP tracker.</p>
       <form id="rsvpForm" action="https://script.google.com/macros/s/AKfycbxPr9ab12BT8mDyacEKOLG5yHscYi-kpG4snTz35Qvl-yDreIPGaB3jADMVpJ4SCoM5JQ/exec" method="post" target="rsvpHiddenFrame">
-        <label>Your name *<input required name="name" placeholder="Full name"></label>
-        <label>Will you attend? *<select required name="attendance"><option value="">Choose one</option><option>Joyfully accepts</option><option>Regretfully declines</option></select></label>
-        <label>Number attending *<select required name="guestCount"><option value="">Choose one</option><option>0</option><option>1</option><option>2</option></select></label>
+        <label><span>Your name <b class="required-marker" aria-hidden="true">*</b></span><input required name="name" placeholder="Full name"></label>
+        <label><span>Will you attend? <b class="required-marker" aria-hidden="true">*</b></span><select required name="attendance"><option value="">Choose one</option><option>Joyfully accepts</option><option>Regretfully declines</option></select></label>
+        <label><span>Number attending <b class="required-marker" aria-hidden="true">*</b></span><select required name="guestCount"><option value="">Choose one</option><option>0</option><option>1</option><option>2</option></select></label>
         <label>Companion name<input name="companion" placeholder="Leave blank if attending alone"></label>
         <label>Dietary restrictions or allergies<textarea name="dietary" placeholder="Please let us know of any dietary needs"></textarea></label>
         <label>Song request<input name="songRequest" placeholder="Optional song request"></label>

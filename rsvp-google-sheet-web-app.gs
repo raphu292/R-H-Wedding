@@ -1,9 +1,9 @@
 // R & H Wedding 2027 RSVP Google Sheet Web App
-// Header-safe version: values are written under the correct column name even if columns move.
+// Header-safe version without Invited Party / Family.
 //
 // Sheet headers supported:
-// Timestamp | Full Name | Invited Party / Family | Attendance | Number Attending
-// Companion Name | Dietary Restrictions | Song Request | Message | Contact Number
+// Timestamp | Full Name | Attendance | Number Attending | Companion Name
+// Dietary Restrictions | Song Request | Message | Contact Number
 //
 // Setup after changing this file in Google Apps Script:
 // 1. Replace Code.gs with this full code.
@@ -21,7 +21,6 @@ const RESPONSE_SHEET_NAME = 'RSVP Responses';
 const DEFAULT_HEADERS = [
   'Timestamp',
   'Full Name',
-  'Invited Party / Family',
   'Attendance',
   'Number Attending',
   'Companion Name',
@@ -58,15 +57,13 @@ function doPost(e) {
     const valuesByHeader = {
       'Timestamp': new Date(),
       'Full Name': name,
-      'Invited Party / Family': clean_(params.invitedParty),
       'Attendance': attendance,
       'Number Attending': clean_(params.guestCount),
       'Companion Name': clean_(params.companion),
       'Dietary Restrictions': clean_(params.dietary),
       'Song Request': clean_(params.songRequest),
       'Message': clean_(params.message),
-      'Contact Number': clean_(params.contactNumber),
-      'Source': clean_(params.source) || 'R-H-Wedding website'
+      'Contact Number': clean_(params.contactNumber)
     };
 
     const row = headers.map(header => valuesByHeader[String(header).trim()] || '');
@@ -92,7 +89,6 @@ function ensureHeaders_(sheet) {
     return;
   }
 
-  // If important columns are missing, append them to the right instead of breaking existing data.
   const existing = firstRow.map(value => String(value || '').trim()).filter(Boolean);
   const missing = DEFAULT_HEADERS.filter(header => !existing.includes(header));
 

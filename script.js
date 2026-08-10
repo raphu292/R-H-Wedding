@@ -78,16 +78,16 @@ function playTone(midi, start, duration, kind, volume) {
 function scheduleLoop(start) {
   chords.forEach((chord, barIndex) => {
     const barStart = start + barIndex * BAR_SECONDS;
-    chord.forEach(note => playTone(note, barStart, 3.05, "pad", .025));
+    chord.forEach(note => playTone(note, barStart, 3.05, "pad", .055));
 
     const arpeggio = [chord[0], chord[1], chord[2], chord[1], chord[2], chord[1]];
     arpeggio.forEach((note, step) => {
-      playTone(note + 12, barStart + step * .5, .58, "piano", .045);
-      if (step === 0 || step === 3) playTone(chord[0], barStart + step * .5, .7, "piano", .035);
+      playTone(note + 12, barStart + step * .5, .58, "piano", .095);
+      if (step === 0 || step === 3) playTone(chord[0], barStart + step * .5, .7, "piano", .065);
     });
 
     melody[barIndex].forEach(([note, offset, duration]) => {
-      playTone(note, barStart + offset, duration, "violin", .07);
+      playTone(note, barStart + offset, duration, "violin", .14);
     });
   });
 }
@@ -104,8 +104,14 @@ async function startMusic() {
   if (isPlaying) return;
   audioContext = new (window.AudioContext || window.webkitAudioContext)();
   masterGain = audioContext.createGain();
-  masterGain.gain.value = .72;
-  masterGain.connect(audioContext.destination);
+  masterGain.gain.value = 1;
+  const compressor = audioContext.createDynamicsCompressor();
+  compressor.threshold.value = -18;
+  compressor.knee.value = 16;
+  compressor.ratio.value = 5;
+  compressor.attack.value = .01;
+  compressor.release.value = .25;
+  masterGain.connect(compressor).connect(audioContext.destination);
   await audioContext.resume();
   isPlaying = true;
   nextLoopTime = audioContext.currentTime + .06;

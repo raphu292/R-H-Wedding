@@ -3,6 +3,8 @@ const musicButton = document.querySelector("#musicButton");
 
 let audioContext;
 let masterGain;
+let fontPlayer;
+let instruments;
 let musicTimer;
 let nextLoopTime = 0;
 let isPlaying = false;
@@ -29,94 +31,76 @@ const melody = [
   [[66,0,.75],[69,.75,.75],[74,1.5,1.35]]
 ];
 
-function frequency(midi) {
-  return 440 * Math.pow(2, (midi - 69) / 12);
-}
-
-function playTone(midi, start, duration, kind, volume) {
-  if (!audioContext || !masterGain) return;
-
-  const oscillator = audioContext.createOscillator();
-  const gain = audioContext.createGain();
-  const filter = audioContext.createBiquadFilter();
-  oscillator.frequency.value = frequency(midi);
-  filter.type = "lowpass";
-
-  if (kind === "violin") {
-    oscillator.type = "sawtooth";
-    filter.frequency.value = 2400;
-    filter.Q.value = 1.2;
-    const vibrato = audioContext.createOscillator();
-    const vibratoDepth = audioContext.createGain();
-    vibrato.frequency.value = 5.1;
-    vibratoDepth.gain.value = 5.5;
-    vibrato.connect(vibratoDepth).connect(oscillator.detune);
-    vibrato.start(start);
-    vibrato.stop(start + duration + .1);
-    gain.gain.setValueAtTime(.0001, start);
-    gain.gain.exponentialRampToValueAtTime(volume, start + .16);
-    gain.gain.setValueAtTime(volume * .9, Math.max(start + .17, start + duration - .28));
-  } else if (kind === "cello") {
-    oscillator.type = "sawtooth";
-    filter.frequency.value = 680;
-    filter.Q.value = .8;
-    gain.gain.setValueAtTime(.0001, start);
-    gain.gain.exponentialRampToValueAtTime(volume, start + .18);
-    gain.gain.setValueAtTime(volume * .88, Math.max(start + .2, start + duration - .32));
-  } else if (kind === "pad") {
-    oscillator.type = "sine";
-    filter.frequency.value = 1200;
-    gain.gain.setValueAtTime(.0001, start);
-    gain.gain.exponentialRampToValueAtTime(volume, start + .55);
-    gain.gain.setValueAtTime(volume, Math.max(start + .56, start + duration - .6));
-  } else if (kind === "harp") {
-    oscillator.type = "sine";
-    filter.frequency.value = 4800;
-    gain.gain.setValueAtTime(volume, start);
-    gain.gain.exponentialRampToValueAtTime(.0001, start + duration);
-  } else {
-    oscillator.type = "triangle";
-    filter.frequency.value = 3200;
-    gain.gain.setValueAtTime(volume, start);
-    gain.gain.exponentialRampToValueAtTime(.0001, start + duration);
+async function prepareInstruments() {
+  if (typeof WebAudioFontPlayer !== "function") {
+    throw new Error("Instrument library did not load");
   }
 
-  gain.gain.exponentialRampToValueAtTime(.0001, start + duration);
-  oscillator.connect(filter).connect(gain).connect(masterGain);
-  oscillator.start(start);
-  oscillator.stop(start + duration + .05);
+  fontPlayer = new WebAudioFontPlayer();
+  const presetNames = {
+    piano: "_tone_0000_Aspirin_sf2_file",
+    violin: "_tone_0400_Aspirin_sf2_file",
+    cello: "_tone_0420_Aspirin_sf2_file",
+    harp: "_tone_0460_Aspirin_sf2_file"
+  };
+
+  Object.values(presetNames).forEach(name => {
+    fontPlayer.loader.decodeAfterLoading(audioContext, name);
+  });
+
+  await new Promise(resolve => fontPlayer.loader.waitLoad(resolve));
+  instruments = Object.fromEntries(
+    Object.entries(presetNames).map(([kind, name]) => [kind, window[name]])
+  );
+
+  if (Object.values(instruments).some(preset => !preset)) {
+    throw new Error("Instrument samples did not load");
+  }
+}
+
+function playInstrument(kind, midi, start, duration, volume) {
+  if (!audioContext || !fontPlayer || !instruments?.[kind]) return;
+  fontPlayer.queueWaveTable(
+    audioContext,
+    masterGain,
+    instruments[kind],
+    start,
+    midi,
+    duration,
+    volume
+  );
 }
 
 function scheduleLoop(start) {
   chords.forEach((chord, barIndex) => {
     const barStart = start + barIndex * BAR_SECONDS;
 
-    chord.forEach(note => playTone(note, barStart, 3.05, "pad", .042));
-    playTone(chord[0] - 12, barStart, 1.46, "cello", .07);
-    playTone(chord[2] - 12, barStart + 1.5, 1.46, "cello", .06);
+    playInstrument("cello", chord[0] - 12, barStart, 1.42, .32);
+    playInstrument("cello", chord[2] - 12, barStart + 1.5, 1.42, .27);
 
-    playTone(chord[1] + 12, barStart, 1.44, "violin", .028);
-    playTone(chord[2] + 12, barStart + 1.5, 1.44, "violin", .03);
+    playInstrument("violin", chord[1] + 12, barStart, 1.4, .10);
+    playInstrument("violin", chord[2] + 12, barStart + 1.5, 1.4, .11);
 
     const arpeggio = [chord[0], chord[1], chord[2], chord[1], chord[2], chord[1]];
     arpeggio.forEach((note, step) => {
-      playTone(note + 12, barStart + step * .5, .58, "piano", .078);
+      const noteStart = barStart + step * .5;
+      playInstrument("piano", note + 12, noteStart, .52, .32);
       if (step === 0 || step === 3) {
-        playTone(chord[0], barStart + step * .5, .7, "piano", .052);
+        playInstrument("piano", chord[0], noteStart, .62, .21);
       }
       if (step === 0 || step === 2 || step === 4) {
-        playTone(note + 24, barStart + step * .5, .42, "harp", .025);
+        playInstrument("harp", note + 24, noteStart, .38, .16);
       }
     });
 
     melody[barIndex].forEach(([note, offset, duration]) => {
-      playTone(note, barStart + offset, duration, "violin", .12);
+      playInstrument("violin", note, barStart + offset, duration * .96, .38);
     });
   });
 }
 
 function keepMusicScheduled() {
-  if (!audioContext || !isPlaying) return;
+  if (!audioContext || !isPlaying || !instruments) return;
   while (nextLoopTime < audioContext.currentTime + 5) {
     scheduleLoop(nextLoopTime);
     nextLoopTime += LOOP_SECONDS;
@@ -125,17 +109,23 @@ function keepMusicScheduled() {
 
 async function startMusic() {
   if (isPlaying) return;
-  audioContext = new (window.AudioContext || window.webkitAudioContext)();
+
+  const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+  audioContext = new AudioContextClass();
   masterGain = audioContext.createGain();
-  masterGain.gain.value = 1;
+  masterGain.gain.value = .78;
+
   const compressor = audioContext.createDynamicsCompressor();
-  compressor.threshold.value = -18;
-  compressor.knee.value = 16;
-  compressor.ratio.value = 5;
-  compressor.attack.value = .01;
-  compressor.release.value = .25;
+  compressor.threshold.value = -16;
+  compressor.knee.value = 18;
+  compressor.ratio.value = 4;
+  compressor.attack.value = .012;
+  compressor.release.value = .3;
   masterGain.connect(compressor).connect(audioContext.destination);
+
   await audioContext.resume();
+  await prepareInstruments();
+
   isPlaying = true;
   nextLoopTime = audioContext.currentTime + .06;
   keepMusicScheduled();
@@ -146,16 +136,24 @@ async function startMusic() {
 async function stopMusic() {
   isPlaying = false;
   window.clearInterval(musicTimer);
+  if (fontPlayer && audioContext) fontPlayer.cancelQueue(audioContext);
   if (audioContext) await audioContext.close();
   audioContext = undefined;
   masterGain = undefined;
+  fontPlayer = undefined;
+  instruments = undefined;
   updateMusic(false);
 }
 
 async function openInvitation() {
   gate.classList.add("open");
   document.body.classList.remove("locked");
-  try { await startMusic(); } catch (_) { updateMusic(false); }
+  try {
+    await startMusic();
+  } catch (error) {
+    console.error("Wedding music could not start:", error);
+    await stopMusic();
+  }
 }
 
 function updateMusic(playing) {
@@ -168,7 +166,13 @@ document.querySelector("#openInvitation").addEventListener("click", openInvitati
 document.querySelector("#openCopy").addEventListener("click", openInvitation);
 musicButton.addEventListener("click", async () => {
   if (isPlaying) await stopMusic();
-  else await startMusic();
+  else {
+    try { await startMusic(); }
+    catch (error) {
+      console.error("Wedding music could not start:", error);
+      await stopMusic();
+    }
+  }
 });
 
 const target = new Date("2027-06-09T17:00:00+08:00").getTime();

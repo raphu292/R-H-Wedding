@@ -98,19 +98,26 @@
 
     <section class="notes">
       <article><span>✦</span><h3>Adults-only celebration</h3><p>While we adore your little ones, we kindly request that our wedding be an adults-only occasion.</p></article>
-      <article><span>♡</span><h3>Your presence is the greatest gift</h3><p>No gifts are needed. Optional GCash details can be added here later.</p></article>
+      <article><span>♡</span><h3>Your presence is the greatest gift</h3><p>No gifts are needed. For those who would still like to give, a monetary gift may be sent via GCash.</p></article>
     </section>
 
     <section class="rsvp" id="rsvp">
       <p class="eyebrow">Kindly reply</p><h2>Will you join us?</h2>
-      <p>This is a sample RSVP demonstration. Your final response form can be connected later.</p>
-      <form id="rsvpForm">
+      <p>Please let us know if we may save you a seat beneath the stars. Your response will be recorded in our RSVP tracker once the Google Sheet web app URL is added.</p>
+      <form id="rsvpForm" action="PASTE_APPS_SCRIPT_WEB_APP_URL_HERE" method="post" target="rsvpHiddenFrame">
+        <input type="hidden" name="source" value="R-H-Wedding website">
         <label>Your name<input required name="name" placeholder="Full name"></label>
         <label>Will you attend?<select required name="attendance"><option value="">Choose one</option><option>Joyfully accepts</option><option>Regretfully declines</option></select></label>
+        <label>Number attending<select required name="guestCount"><option value="">Choose one</option><option>1</option><option>2</option></select></label>
+        <label>Accompanying guest<input name="companion" placeholder="Leave blank if attending alone"></label>
+        <label>Dietary restrictions or allergies<textarea name="dietary" placeholder="Please let us know of any dietary needs"></textarea></label>
         <label>A note for the couple<textarea name="message" placeholder="Share your wishes"></textarea></label>
-        <button class="button" type="submit">Send sample RSVP</button>
+        <label class="honeypot">Leave this blank<input name="website" tabindex="-1" autocomplete="off"></label>
+        <button class="button" type="submit">Send RSVP</button>
       </form>
-      <p class="success" id="success">Thank you—your sample response has been received on this device.</p>
+      <iframe name="rsvpHiddenFrame" hidden title="RSVP submission"></iframe>
+      <p class="success" id="success">Thank you—your RSVP has been sent.</p>
+      <p class="success" id="rsvpError">RSVP tracker setup note: paste your deployed Google Apps Script Web App URL into the form action first.</p>
     </section>
   </main>
   <footer><span>R</span><i>&amp;</i><span>H</span><p>Raphael & Helia Teimoori-Unson · 22 May 2027</p></footer>

@@ -39,8 +39,27 @@ function updateCountdown() {
 updateCountdown();
 setInterval(updateCountdown, 1000);
 
-document.querySelector("#rsvpForm").addEventListener("submit", event => {
-  event.preventDefault();
-  document.querySelector("#success").classList.add("show");
-  event.currentTarget.reset();
-});
+const rsvpForm = document.querySelector("#rsvpForm");
+const success = document.querySelector("#success");
+const rsvpError = document.querySelector("#rsvpError");
+
+if (rsvpForm) {
+  rsvpForm.addEventListener("submit", event => {
+    success?.classList.remove("show");
+    rsvpError?.classList.remove("show");
+
+    const action = rsvpForm.getAttribute("action") || "";
+    const isPlaceholder = !action || action.includes("PASTE_APPS_SCRIPT_WEB_APP_URL_HERE");
+
+    if (isPlaceholder) {
+      event.preventDefault();
+      if (rsvpError) rsvpError.classList.add("show");
+      return;
+    }
+
+    window.setTimeout(() => {
+      if (success) success.classList.add("show");
+      rsvpForm.reset();
+    }, 900);
+  });
+}

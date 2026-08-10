@@ -23,7 +23,7 @@ musicButton.addEventListener("click", async () => {
 music.addEventListener("play", () => updateMusic(true));
 music.addEventListener("pause", () => updateMusic(false));
 
-const target = new Date("2027-05-22T16:00:00+08:00").getTime();
+const target = new Date("2027-06-09T17:00:00+08:00").getTime();
 function updateCountdown() {
   const d = Math.max(0, target - Date.now());
   const values = {

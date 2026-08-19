@@ -62,13 +62,16 @@ function doPost(e) {
 
     const headers = sheet.getRange(HEADER_ROW, 1, 1, Math.max(sheet.getLastColumn(), DEFAULT_HEADERS.length)).getValues()[0];
     const status = normalizeStatus_(attendance);
-    const seats = Number(clean_(params.guestCount)) || 0;
+    const companionNames = normalizeCompanionNames_(params.companion);
+    const submittedCount = Number(clean_(params.guestCount)) || 0;
+    const calculatedCount = 1 + countCompanions_(companionNames);
+    const seats = status === 'Confirmed' ? Math.max(submittedCount, calculatedCount) : 0;
     const attending = status === 'Confirmed' ? seats : 0;
 
     const valuesByHeader = {
       'Household / Group': '',
       'Guest Name': name,
-      'Companion Name(s)': clean_(params.companion),
+      'Companion Name(s)': companionNames,
       'Side': '',
       'Invitation Sent?': 'Yes',
       'RSVP Status': status,
@@ -140,6 +143,19 @@ function normalizeStatus_(attendance) {
   }
 
   return attendance;
+}
+
+function normalizeCompanionNames_(value) {
+  return String(value || '')
+    .split(/[\n,]+/)
+    .map(name => name.trim())
+    .filter(Boolean)
+    .join('\n');
+}
+
+function countCompanions_(value) {
+  if (!value) return 0;
+  return value.split('\n').filter(Boolean).length;
 }
 
 function clean_(value) {

@@ -47,8 +47,8 @@ musicButton?.addEventListener("click", async () => {
 music?.addEventListener("play", () => updateMusic(true));
 music?.addEventListener("pause", () => updateMusic(false));
 
-// Countdown: June 9, 2027 at 5:00 PM, Philippines time.
-const target = new Date("2027-06-09T17:00:00+08:00").getTime();
+// Countdown: June 18, 2027 at 5:00 PM, Philippines time.
+const target = new Date("2027-06-18T17:00:00+08:00").getTime();
 
 function updateCountdown() {
   const remaining = Math.max(0, target - Date.now());

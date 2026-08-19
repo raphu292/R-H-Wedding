@@ -44,8 +44,17 @@
       cursor: pointer;
     }
 
+    .status-note {
+      max-width: 500px;
+      margin: 20px auto 0;
+      text-align: center;
+      color: #666;
+      font-size: 13px;
+    }
+
     @media print {
-      .print-button {
+      .print-button,
+      .status-note {
         display: none;
       }
 
@@ -70,11 +79,99 @@
     Loading guest list...
   </div>
 
+  <div id="statusNote" class="status-note"></div>
+
   <script>
     const SHEET_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRCgBeqgeZdnCPxojPcG0OP0wmbd0a5fJrSBf2rXt72oJBcPHFJPnbkpiytmBu53BKjwTivyrlBLR2I/pub?gid=1263874501&single=true&output=csv";
 
+    function parseCsv(text) {
+      const rows = [];
+      let row = [];
+      let cell = "";
+      let insideQuotes = false;
+
+      for (let i = 0; i < text.length; i++) {
+        const char = text[i];
+        const next = text[i + 1];
+
+        if (char === '"') {
+          if (insideQuotes && next === '"') {
+            cell += '"';
+            i++;
+          } else {
+            insideQuotes = !insideQuotes;
+          }
+          continue;
+        }
+
+        if (char === ',' && !insideQuotes) {
+          row.push(cell);
+          cell = "";
+          continue;
+        }
+
+        if ((char === '\n' || char === '\r') && !insideQuotes) {
+          if (char === '\r' && next === '\n') i++;
+          row.push(cell);
+          rows.push(row);
+          row = [];
+          cell = "";
+          continue;
+        }
+
+        cell += char;
+      }
+
+      row.push(cell);
+      rows.push(row);
+      return rows;
+    }
+
+    function escapeHtml(value) {
+      return value
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+    }
+
+    function normalizeName(value) {
+      return value
+        .replace(/\s+/g, " ")
+        .replace(/\s+\./g, ".")
+        .trim();
+    }
+
+    function extractNamesFromCsv(csvText) {
+      const rows = parseCsv(csvText);
+      const seen = new Set();
+      const names = [];
+
+      rows.forEach(row => {
+        row.forEach(cell => {
+          String(cell || "")
+            .split(/\n|,|;| {2,}/)
+            .map(normalizeName)
+            .filter(Boolean)
+            .forEach(name => {
+              const lower = name.toLowerCase();
+
+              if (lower === "guest name" || lower === "no confirmed guests yet") return;
+              if (seen.has(lower)) return;
+
+              seen.add(lower);
+              names.push(name);
+            });
+        });
+      });
+
+      return names.sort((a, b) => a.localeCompare(b));
+    }
+
     async function loadGuestList() {
       const guestListDiv = document.getElementById("guestList");
+      const statusNote = document.getElementById("statusNote");
 
       try {
         const freshCsvUrl = `${SHEET_CSV_URL}&cacheBust=${Date.now()}`;
@@ -85,22 +182,18 @@
         }
 
         const csvText = await response.text();
-
-        const names = csvText
-          .replace(/\r/g, "\n")
-          .replace(/"/g, "")
-          .split(/\n|,| {2,}/)
-          .map(name => name.trim())
-          .filter(name => name)
-          .filter(name => name.toLowerCase() !== "guest name")
-          .filter(name => name.toLowerCase() !== "no confirmed guests yet")
-          .sort((a, b) => a.localeCompare(b));
+        const names = extractNamesFromCsv(csvText);
 
         guestListDiv.innerHTML = names.length
-          ? names.map(name => `<div class="guest-name">${name}</div>`).join("")
+          ? names.map(name => `<div class="guest-name">${escapeHtml(name)}</div>`).join("")
           : "No confirmed guests yet.";
+
+        statusNote.textContent = names.length
+          ? `${names.length} guest name${names.length === 1 ? "" : "s"} shown.`
+          : "";
       } catch (error) {
         guestListDiv.innerHTML = "Unable to load guest list.";
+        statusNote.textContent = "Please check that the Google Sheet tab is published as CSV.";
         console.error(error);
       }
     }

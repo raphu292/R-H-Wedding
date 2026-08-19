@@ -77,14 +77,24 @@
       const guestListDiv = document.getElementById("guestList");
 
       try {
-        const response = await fetch(SHEET_CSV_URL);
+        const freshCsvUrl = `${SHEET_CSV_URL}&cacheBust=${Date.now()}`;
+        const response = await fetch(freshCsvUrl, { cache: "no-store" });
+
+        if (!response.ok) {
+          throw new Error(`CSV request failed: ${response.status}`);
+        }
+
         const csvText = await response.text();
 
         const names = csvText
-          .split("\n")
-          .map(row => row.replace(/"/g, "").trim())
-          .filter(name => name && name.toLowerCase() !== "guest name" && name.toLowerCase() !== "no confirmed guests yet")
-          .sort();
+          .replace(/\r/g, "\n")
+          .replace(/"/g, "")
+          .split(/\n|,| {2,}/)
+          .map(name => name.trim())
+          .filter(name => name)
+          .filter(name => name.toLowerCase() !== "guest name")
+          .filter(name => name.toLowerCase() !== "no confirmed guests yet")
+          .sort((a, b) => a.localeCompare(b));
 
         guestListDiv.innerHTML = names.length
           ? names.map(name => `<div class="guest-name">${name}</div>`).join("")

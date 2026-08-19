@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Printable Guest List</title>
+
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: white;
+      color: #222;
+      padding: 40px;
+    }
+
+    h1 {
+      text-align: center;
+      margin-bottom: 10px;
+    }
+
+    .subtitle {
+      text-align: center;
+      margin-bottom: 30px;
+      color: #666;
+    }
+
+    .guest-list {
+      max-width: 500px;
+      margin: 0 auto;
+      font-size: 18px;
+      line-height: 1.8;
+    }
+
+    .guest-name {
+      border-bottom: 1px solid #ddd;
+      padding: 6px 0;
+    }
+
+    .print-button {
+      display: block;
+      margin: 30px auto;
+      padding: 10px 20px;
+      font-size: 16px;
+      cursor: pointer;
+    }
+
+    @media print {
+      .print-button {
+        display: none;
+      }
+
+      body {
+        padding: 20px;
+      }
+
+      .guest-name {
+        font-size: 16px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <h1>R & H Wedding 2027</h1>
+  <div class="subtitle">Printable Guest List</div>
+
+  <button class="print-button" onclick="window.print()">Print Guest List</button>
+
+  <div id="guestList" class="guest-list">
+    Loading guest list...
+  </div>
+
+  <script>
+    const SHEET_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRCgBeqgeZdnCPxojPcG0OP0wmbd0a5fJrSBf2rXt72oJBcPHFJPnbkpiytmBu53BKjwTivyrlBLR2I/pub?gid=1263874501&single=true&output=csv";
+
+    async function loadGuestList() {
+      const guestListDiv = document.getElementById("guestList");
+
+      try {
+        const response = await fetch(SHEET_CSV_URL);
+        const csvText = await response.text();
+
+        const names = csvText
+          .split("\n")
+          .map(row => row.replace(/"/g, "").trim())
+          .filter(name => name && name.toLowerCase() !== "guest name" && name.toLowerCase() !== "no confirmed guests yet")
+          .sort();
+
+        guestListDiv.innerHTML = names.length
+          ? names.map(name => `<div class="guest-name">${name}</div>`).join("")
+          : "No confirmed guests yet.";
+      } catch (error) {
+        guestListDiv.innerHTML = "Unable to load guest list.";
+        console.error(error);
+      }
+    }
+
+    loadGuestList();
+  </script>
+</body>
+</html>

@@ -47,8 +47,8 @@ musicButton?.addEventListener("click", async () => {
 music?.addEventListener("play", () => updateMusic(true));
 music?.addEventListener("pause", () => updateMusic(false));
 
-// Countdown: June 18, 2027 at 5:00 PM, Philippines time.
-const target = new Date("2027-06-18T17:00:00+08:00").getTime();
+// Countdown: the start of September 18, 2027, Philippines time.
+const target = new Date("2027-09-18T00:00:00+08:00").getTime();
 
 function updateCountdown() {
   const remaining = Math.max(0, target - Date.now());
@@ -69,29 +69,3 @@ function updateCountdown() {
 
 updateCountdown();
 window.setInterval(updateCountdown, 1000);
-
-// RSVP submission display logic.
-const rsvpForm = document.querySelector("#rsvpForm");
-const success = document.querySelector("#success");
-const rsvpError = document.querySelector("#rsvpError");
-
-if (rsvpForm) {
-  rsvpForm.addEventListener("submit", event => {
-    success?.classList.remove("show");
-    rsvpError?.classList.remove("show");
-
-    const action = rsvpForm.getAttribute("action") || "";
-    const isPlaceholder = !action || action.includes("PASTE_APPS_SCRIPT_WEB_APP_URL_HERE");
-
-    if (isPlaceholder) {
-      event.preventDefault();
-      rsvpError?.classList.add("show");
-      return;
-    }
-
-    window.setTimeout(() => {
-      success?.classList.add("show");
-      rsvpForm.reset();
-    }, 900);
-  });
-}

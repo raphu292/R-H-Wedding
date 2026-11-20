@@ -1,0 +1,108 @@
+/* Fairy-garden Thoughtful Reminders — matches the existing blush/mauve site
+   Palette sampled from swan-garden.css and the two cards immediately above. */
+.thoughtful-reminders {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  background: linear-gradient(115deg, #f1dfe1 0%, #eedcdf 49%, #e9d4ce 100%);
+  color: #594450;
+  padding: clamp(76px, 9vw, 124px) max(7vw, 24px);
+}
+.thoughtful-reminders::before,
+.thoughtful-reminders::after {
+  position: absolute;
+  pointer-events: none;
+  z-index: -1;
+  font-family: "Cormorant Garamond", Georgia, serif;
+  color: #b78952;
+  opacity: 0.23;
+  letter-spacing: .4em;
+  white-space: nowrap;
+  content: "✦   ❀   ✧";
+}
+.thoughtful-reminders::before { top: -28px; right: -50px; font-size: clamp(3.5rem, 8vw, 7rem); transform: rotate(13deg); }
+.thoughtful-reminders::after { bottom: -32px; left: -45px; font-size: clamp(3rem, 7vw, 6rem); transform: rotate(-12deg); }
+.thoughtful-reminders .reminders-inner {
+  position: relative;
+  max-width: 1190px;
+  margin: auto;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1.1fr);
+  gap: clamp(48px, 8vw, 125px);
+  align-items: start;
+}
+.thoughtful-reminders .reminders-kicker {
+  color: #9d6d7e;
+  font-size: .65rem;
+  font-weight: 600;
+  letter-spacing: .29em;
+  text-transform: uppercase;
+  margin: 8px 0 26px;
+}
+.thoughtful-reminders .reminders-intro h2 {
+  font: 500 clamp(3.2rem, 5.6vw, 5.8rem)/1.02 "Cormorant Garamond", Georgia, serif;
+  letter-spacing: -.018em;
+  color: #624555;
+  margin: 0 0 31px;
+}
+.thoughtful-reminders .reminders-intro h2 em {
+  font-weight: 400;
+  color: #b78952;
+}
+.thoughtful-reminders .reminders-intro > p:not(.reminders-kicker) {
+  max-width: 415px;
+  font-size: .9rem;
+  line-height: 1.95;
+  color: #725968;
+}
+.thoughtful-reminders .reminders-intro .reminders-signoff {
+  color: #9d6d7e;
+  font-size: .7rem;
+  letter-spacing: .08em;
+  margin-top: 24px;
+}
+.thoughtful-reminders .reminders-faq {
+  border-bottom: 1px solid #cbaeb9;
+}
+.thoughtful-reminders .reminders-faq details {
+  border-top: 1px solid #cbaeb9;
+}
+.thoughtful-reminders .reminders-faq details[open] {
+  background: rgba(255, 253, 251, 0.24);
+}
+.thoughtful-reminders .reminders-faq summary {
+  list-style: none;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 25px;
+  min-height: 73px;
+  padding: 20px 2px;
+  cursor: pointer;
+  color: #624555;
+  font-size: .85rem;
+  font-weight: 500;
+  line-height: 1.55;
+}
+.thoughtful-reminders .reminders-faq summary::-webkit-details-marker { display: none; }
+.thoughtful-reminders .reminders-faq summary::after {
+  content: "+";
+  flex-shrink: 0;
+  color: #b78952;
+  font: 400 1.7rem/1 "Cormorant Garamond", Georgia, serif;
+}
+.thoughtful-reminders .reminders-faq details[open] > summary::after { content: "×"; }
+.thoughtful-reminders .reminders-faq summary:focus-visible { outline: 2px solid #b78952; outline-offset: 4px; }
+.thoughtful-reminders .reminders-faq details > p {
+  margin: 0;
+  padding: 0 33px 28px 2px;
+  color: #725968;
+  font-size: .85rem;
+  line-height: 1.9;
+}
+@media (max-width: 800px) {
+  .thoughtful-reminders { padding: 72px 27px; }
+  .thoughtful-reminders .reminders-inner { grid-template-columns: 1fr; gap: 38px; }
+  .thoughtful-reminders .reminders-intro h2 { font-size: clamp(3.4rem, 12vw, 5rem); }
+  .thoughtful-reminders .reminders-faq summary { min-height: 69px; }
+}

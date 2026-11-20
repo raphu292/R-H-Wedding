@@ -106,3 +106,14 @@
   .thoughtful-reminders .reminders-intro h2 { font-size: clamp(3.4rem, 12vw, 5rem); }
   .thoughtful-reminders .reminders-faq summary { min-height: 69px; }
 }
+
+
+/* One centered gift note, with the oversized adults-only panel removed. */
+.notes.notes-single{display:block;background:#e9d4ce}
+.notes.notes-single article{
+  background:#e9d4ce;
+  padding:clamp(48px,6vw,68px) 24px;
+  max-width:850px;
+  margin:0 auto;
+}
+.notes.notes-single article p{max-width:610px;margin:0 auto}
